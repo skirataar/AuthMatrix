@@ -1,0 +1,30 @@
+{
+  "name": "sec-portfolio-suite",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AppSec Engineering Portfolio: OWASP API Security Compliance Auditor, Vulnerable Sandbox API, and Security Posture Dashboard",
+  "workspaces": [
+    "sandbox-api",
+    "auth-auditor",
+    "dashboard"
+  ],
+  "scripts": {
+    "dev:sandbox": "npm run dev --workspace=sandbox-api",
+    "build:sandbox": "npm run build --workspace=sandbox-api",
+    "prisma:generate": "npm run prisma:generate --workspace=sandbox-api",
+    "prisma:seed": "npm run prisma:seed --workspace=sandbox-api"
+  },
+  "keywords": [
+    "appsec",
+    "cybersecurity",
+    "owasp-api-security",
+    "bola",
+    "idor",
+    "broken-authentication",
+    "bfla",
+    "compliance-auditor",
+    "devsecops"
+  ],
+  "author": "",
+  "license": "Apache-2.0"
+}

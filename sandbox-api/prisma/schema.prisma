@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  passwordHash String
+  name         String
+  role         String     @default("USER") // "USER" | "ADMIN" | "AUDITOR"
+  tenantId     String     // Multi-tenancy isolation boundary: "tenant-a", "tenant-b", etc.
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  documents    Document[]
+  auditLogs    AuditLog[]
+}
+
+model Document {
+  id             String   @id @default(cuid())
+  title          String
+  content        String
+  classification String   @default("INTERNAL") // "PUBLIC" | "INTERNAL" | "CONFIDENTIAL" | "RESTRICTED"
+  ownerId        String
+  tenantId       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  owner          User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([tenantId])
+}
+
+model AuditLog {
+  id           String   @id @default(cuid())
+  action       String   // e.g., "DOCUMENT_ACCESS", "AUTH_LOGIN", "ADMIN_ACTION"
+  actorId      String?
+  resourceId   String?
+  securityMode String   // "vulnerable" | "patched"
+  status       String   // "ALLOWED" | "DENIED"
+  details      String?
+  ipAddress    String?
+  timestamp    DateTime @default(now())
+
+  actor        User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([actorId])
+  @@index([securityMode])
+}
